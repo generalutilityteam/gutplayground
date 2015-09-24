@@ -1,0 +1,162 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>Center of Gravity</title>
+
+    <style>
+        body {
+            color: black;
+            font: 10pt arial;
+            background-color: white;
+        }
+
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            border: 1px solid #444444;
+            background-color: #222222;
+        }
+    </style>
+	
+        <script type="text/javascript" src="js/vis.js"></script><style type="text/css"></style>
+        <link href="css/vis.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    </head>
+
+    <body>
+
+        <div id="mynetwork"></div>
+		<div id="legend" style="background-color: #222222; color:white; font-size:15px;">
+			<ul class="fa-ul">
+			  <li><i class="fa-li fa fa-balance-scale" style="color:silver"></i>Political</li>
+			  <li><i class="fa-li fa fa-shield" style="color:black"></i>Military</li>
+			  <li><i class="fa-li fa fa-money" style="color:yellow"></i>Economic</li>
+			  <li><i class="fa-li fa fa-group" style="color:orange"></i>Social</li>
+			  <li><i class="fa-li fa fa-info" style="color:white"></i>Information</li>
+			  <li><i class="fa-li fa fa-cogs" style="color:brown"></i>Infrastructure & Technology</li>
+			  <li><i class="fa-li fa fa-recycle" style="color:green"></i>Environmental/Phyiscal</li>
+			</ul>
+		
+		</div>
+		<div id="info"></div>
+
+        <script type="text/javascript">
+			var color = 'gray';
+			var len = undefined;
+            // create an array with nodes
+            var nodes = [
+                {id: 1, label: 'Node 1', group:'political'},
+                {id: 2, label: 'Node 2', group:'military'},
+                {id: 3, label: 'Node 3', group:'economic'},
+                {id: 4, label: 'Node 4', group:'social'},
+                {id: 5, label: 'Node 5', group:'information'},
+				{id: 6, label: 'Node 6', group:'infrastructureTechnology'},
+				{id: 7, label: 'Node 7', group:'environmentalPhyiscal'}
+            ];
+
+            // create an array with edges
+            var edges = [
+                {from: 1, to: 2},
+                {from: 1, to: 3},
+                {from: 2, to: 4},
+                {from: 2, to: 5}
+            ];
+
+            // create a network
+            var container = document.getElementById('mynetwork');
+            var data = {
+				nodes: nodes,
+				edges: edges
+			};
+			var options = {
+				nodes: {
+					shape: 'dot',
+					size: 20,
+					font: {
+						size: 15,
+						color: '#ffffff'
+					},
+					borderWidth: 2
+				},
+				edges: {
+					width: 2
+				},
+				groups: {
+					political: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf24e',
+							size: 50,
+							color: 'silver'
+						}
+					},
+					military: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf132',
+							size: 50,
+							color: 'black'
+						}
+					},
+					economic: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf0d6',
+							size: 50,
+							color: 'yellow'
+						}
+					},
+					social: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf0c0',
+							size: 50,
+							color: 'orange'
+						}
+					},
+					information: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf129',
+							size: 50,
+							color: 'white'
+						}
+					},
+					infrastructureTechnology: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf085',
+							size: 50,
+							color: 'brown'
+						}
+					},
+					environmentalPhyiscal: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf1b8',
+							size: 50,
+							color: 'green'
+						}
+					},
+				}
+			};
+			
+            network = new vis.Network(container, data, options);
+
+            // add event listener
+            network.on('select', function (properties) {
+                document.getElementById('info').innerHTML += 'selection: ' + JSON.stringify(properties) + '<br>';
+            });
+        </script>
+    
+	</body>
+	</html>

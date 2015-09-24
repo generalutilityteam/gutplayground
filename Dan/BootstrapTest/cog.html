@@ -1,0 +1,330 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>SHIELD: Decision Support System</title>
+		
+		
+  <style type="text/css">
+    body, select {
+      font: 10pt sans;
+    }
+    #mynetwork {
+      position:relative;
+      border: 1px solid #444444;
+    }
+    table.legend_table {
+      font-size: 11px;
+      border-width:1px;
+      border-color:#d3d3d3;
+      border-style:solid;
+    }
+    table.legend_table,td {
+      border-width:1px;
+      border-color:#d3d3d3;
+      border-style:solid;
+      padding: 2px;
+    }
+    div.table_content {
+      width:80px;
+      text-align:center;
+    }
+    div.table_description {
+      width:100px;
+    }
+
+    #operation {
+      font-size:28px;
+    }
+    #network-popUp {
+      display:none;
+      position:absolute;
+      top:350px;
+      left:170px;
+      z-index:299;
+      width:250px;
+      height:150px;
+      background-color: #f9f9f9;
+      border-style:solid;
+      border-width:3px;
+      border-color: #5394ed;
+      padding:10px;
+      text-align: center;
+    }
+  </style>
+
+        <!-- Bootstrap -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <!--//Layout CSS-->
+        <link href="css/layout.css" rel="stylesheet" type="text/css">
+        <link href="css/cog.css" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+        <!--Sliding Side Bar CSS-->
+        <link href="css/BootSideMenu.css" rel="stylesheet">
+
+        <!-- vis.js files -->
+        <script type="text/javascript" src="js/vis.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <link href="css/vis.css" rel="stylesheet" type="text/css">
+		
+
+		<script type="text/javascript">
+    var nodesArray, edgesArray, network, nodes, edges;
+	
+	      nodesArray = [
+			{id: 1, label: 'Insurgent Cell', group:'cog'},
+			
+			{id: 21, label: 'Insurgent Operations', group:'cc'},
+			{id: 22, label: 'Command and Control', group:'cc'},
+			{id: 23, label: 'Propaganda', group:'cc'},
+			{id: 24, label: 'Intelligence', group:'cc'},
+			{id: 25, label: 'Logistics', group:'cc'},
+			{id: 26, label: 'Mobility', group:'cc'},
+			
+			{id: 31, label: 'Populace Cooperation', group:'cr'},
+			{id: 32, label: 'Political and Economic Strife', group:'cr'},
+			{id: 33, label: 'Leadership', group:'cr'},
+			{id: 34, label: 'External Support', group:'cr'},
+			{id: 35, label: 'Ineffectual Government Security Focus', group:'cr'},
+			{id: 36, label: 'Communication Systems', group:'cr'},
+			
+			{id: 41, label: 'Distrust of Foreigners', group:'cv'},
+			{id: 42, label: 'Monetary Rewards', group:'cv'},
+			{id: 43, label: 'Retribution by Insurgents', group:'cv'},
+			{id: 44, label: 'Threats and Coercion by Insurgents', group:'cv'},
+			{id: 45, label: 'Will to Resist against Government', group:'cv'},
+			{id: 46, label: 'Perception of Government as Puppet Regime', group:'cv'}
+	  ];
+	  nodes = new vis.DataSet(nodesArray);
+      edgesArray = [
+			{from: 21, to: 1},
+			{from: 22, to: 1},
+			{from: 23, to: 1},
+			{from: 24, to: 1},
+			{from: 25, to: 1},
+			{from: 26, to: 1},
+			
+			{from: 31, to: 21},
+			{from: 32, to: 21},
+			{from: 33, to: 21},
+			{from: 34, to: 21},
+			{from: 35, to: 21},
+			{from: 36, to: 21},
+			
+			{from: 41, to: 31},
+			{from: 42, to: 31},
+			{from: 43, to: 31},
+			{from: 44, to: 31},
+			{from: 45, to: 31},
+			{from: 46, to: 31}
+	  ];
+	  edges = new vis.DataSet(edgesArray);
+	 
+      var options = {
+        manipulation: {
+          addNode: function (data, callback) {
+            // filling in the popup DOM elements
+            document.getElementById('operation').innerHTML = "Add Node";
+            document.getElementById('node-id').value = data.id;
+            document.getElementById('node-label').value = data.label;
+			document.getElementById('node-group').value = data.group;
+            document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+            document.getElementById('cancelButton').onclick = clearPopUp.bind();
+            document.getElementById('network-popUp').style.display = 'block';
+          },
+          editNode: function (data, callback) {
+            // filling in the popup DOM elements
+            document.getElementById('operation').innerHTML = "Edit Node";
+            document.getElementById('node-id').value = data.id;
+            document.getElementById('node-label').value = data.label;
+			document.getElementById('node-group').value = data.group;
+            document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+            document.getElementById('cancelButton').onclick = cancelEdit.bind(this,callback);
+            document.getElementById('network-popUp').style.display = 'block';
+          },
+          addEdge: function (data, callback) {
+            if (data.from == data.to) {
+              var r = confirm("Do you want to connect the node to itself?");
+              if (r == true) {
+                callback(data);
+              }
+            }
+            else {
+              callback(data);
+            }
+          }
+        },
+		nodes: {
+			shape: 'dot',
+			size: 15,
+			color: 'black',
+			font: {
+				size: 15,
+				color: 'black'
+			},
+			borderWidth: 2
+		},
+		edges: {
+			width: 2,
+			color: '#202020'
+		},
+		groups: {
+			cog: {
+				shape: 'icon',
+				icon: {
+					face: 'FontAwesome',
+					code: '\uf21e',
+					size: 50,
+					color: '#CC0000'
+				}
+			},
+			cc: {
+				shape: 'icon',
+				icon: {
+					face: 'FontAwesome',
+					code: '\uf1e2',
+					size: 30,
+					color: '#202020'
+				}
+			},
+			cr: {
+				shape: 'icon',
+				icon: {
+					face: 'FontAwesome',
+					code: '\uf06a',
+					size: 30,
+					color: '#FF4500'
+				}
+			},
+			cv: {
+				shape: 'icon',
+				icon: {
+					face: 'FontAwesome',
+					code: '\uf13e',
+					size: 30,
+					color: '#DAA520'
+				}
+			}
+		}
+      };
+	  
+	  //Custom functions
+    function draw() {
+      // create a network
+      var container = document.getElementById('mynetwork');
+	  var data = {
+				nodes: nodes,
+				edges: edges
+				};
+
+      network = new vis.Network(container, data, options);
+    }	
+	function clearAll() {
+        if (network !== null) {
+            network.destroy();
+            network = null;
+        }
+		nodes = null;
+		edges = null;
+        draw();
+    }
+		function resetAll() {
+        if (network !== null) {
+            network.destroy();
+            network = null;
+        }
+		nodes = nodesArray;
+		edges = edgesArray;
+        draw();
+    }
+	function addNode() {
+        var newId = (Math.random() * 1e7).toString(32);
+        nodes.add({id:newId, label:"I'm new!", group:"cog"});
+        nodeIds.push(newId);
+    }
+
+	//Standard functions
+    function clearPopUp() {
+      document.getElementById('saveButton').onclick = null;
+      document.getElementById('cancelButton').onclick = null;
+      document.getElementById('network-popUp').style.display = 'none';
+    }
+
+    function cancelEdit(callback) {
+      clearPopUp();
+      callback(null);
+    }
+
+    function saveData(data,callback) {
+      data.id = document.getElementById('node-id').value;
+      data.label = document.getElementById('node-label').value;
+	  data.group = document.getElementById('node-group').value;
+      clearPopUp();
+      callback(data);
+	  nodes.update([{id:data.id, label:data.label, group:data.group}]);
+    }
+	
+
+  </script>
+    </head>
+
+    <body onload="draw()">
+        <!--Alert Div-->
+        <div class="alert-messages text-center">
+        </div>
+        <!--Navigation Bar-->
+        <script src="js/navigation.js"></script>
+
+        <div id="container-fluid">
+            <div id="content-shield" style="border-top: none;">
+                <div class="col-md-2" style="position: fixed;">
+                    <div style="background-color: #D3D3D3; color: black; width: 18vw; border-radius: 5px; text-align: justify; padding: 0 15px 0 15px;">
+                        <h5 style="padding-top: 20px; font-size: 15px;"><b>MISSION:</b><br> <label id="nav-mission-title-label"></label></h5>
+                        <h5 style="padding-bottom: 20px; font-size: 15px;"><b>ANALYST:</b><br> <label id="nav-analyst-name-label"></label></h5>
+                    </div>
+                    <ul class="nav nav-pills nav-stacked affix" id="nav-shield" role="tablist">
+                    </ul>
+                </div>
+                <div class="col-md-10" style="margin-left: 19vw;">
+                    <div style="position: absolute; top: 80vh; right: 3vmin;">
+                        <button type="submit" class="btn btn-success btn-sm" style="position: fixed; right: 40px;" onclick="saveCOG()"><span class="glyphicon glyphicon-saved"></span> Save and Proceed to Carver Methodology</button>
+                    </div>
+                    <div id="mynetwork" style="height: 78vh; width:73vw; margin-right: 2vw;">
+                        
+                            
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+		
+		<div id="network-popUp">
+  <span id="operation">node</span> <br>
+  <table style="margin:auto;"><tr>
+    <td>id</td><td><input id="node-id" value="new value" /></td>
+  </tr>
+    <tr>
+      <td>label</td><td><input id="node-label" value="new value" /></td>
+    </tr>
+	<tr>
+      <td>group</td><td>
+	  <select id="node-group">
+		  <option value="cog">Center of Gravity</option>
+		  <option value="cc">Critical Capability</option>
+		  <option value="cr">Critical Requirement</option>
+		  <option value="cv">Critical Vulnerability</option>
+		</select>
+		</td>
+    </tr>
+	</table>
+  <input type="button" value="save" id="saveButton"/>
+  <input type="button" value="cancel" id="cancelButton" />
+</div>
+<br />
+    </body>
+</html>

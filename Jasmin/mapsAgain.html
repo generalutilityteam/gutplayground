@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title></title>
+        <script src="http://maps.googleapis.com/maps/api/js"></script>
+        <script>
+            var map;
+            var latitude;
+            var longitude;
+            var philip;
+            var marker;
+            function initialize() {
+                latitude  = document.getElementById("latitude").value;
+                longitude  = document.getElementById("longitude").value;
+                var mapProp = {
+                    center: philip  = new google.maps.LatLng(latitude, longitude),
+                    zoom: 5,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+
+                var markerBounds = new google.maps.LatLngBounds();
+                
+
+                map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+                marker = new google.maps.Marker({
+                    position: philip
+                });
+                markerBounds.extend(philip);
+                marker.setMap(map);
+                map.fitBounds(markerBounds);
+            }
+
+            function update() {
+                latitude = document.getElementById('latitude').value;
+                longitude = document.getElementById('longitude').value;
+                philip = new google.maps.LatLng(latitude, longitude);
+                map.setCenter(philip);
+                marker.setPosition(philip);
+                return false;
+            }
+            document.getElementById('submitButt').addEventListener('click', update);
+            
+        </script>
+    </head>
+    <body onload = "initialize()">
+        <form name="form1" method="post">
+            &nbsp; &nbsp; <INPUT name="latitude" id="latitude" TYPE="Text" Value="14.5643"> &nbsp;&nbsp;<INPUT name="longitude" id="longitude" TYPE="Text" Value="120.9937">             
+            &nbsp;&nbsp;<INPUT TYPE="button" id="submitButt" Value="Submit"> <P></P>
+        
+        <div id = "googleMap" style="width:1265px;height:400px;"></div>
+        </form>
+    </body>
+</html>

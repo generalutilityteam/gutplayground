@@ -1,0 +1,172 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>Center of Gravity</title>
+
+    <style>
+        body {
+            color: black;
+            font: 10pt arial;
+            background-color: white;
+        }
+
+        #mynetwork {
+            width: 900px;
+            height: 600px;
+            border: 1px solid #444444;
+            background-color: white;
+        }
+    </style>
+	
+        <script type="text/javascript" src="js/vis.js"></script><style type="text/css"></style>
+        <link href="css/vis.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    </head>
+
+    <body>
+
+        <div id="mynetwork"></div>
+		<div id="legend" style="font-size:15px;">
+			<ul class="fa-ul">
+			  <li><i class="fa-li fa fa-heartbeat" style="color:#CC0000"></i>Center of Gravity</li>
+			  <li><i class="fa-li fa fa-bomb" style="color:#202020"></i>Critical Capability</li>
+			  <li><i class="fa-li fa fa-exclamation-circle" style="color:#FF4500"></i>Critical Requirement</li>
+			  <li><i class="fa-li fa fa-unlock-alt" style="color:#DAA520"></i>Critical Vulnerability</li>
+			</ul>
+		
+		</div>
+		<div id="nodeStatusWindow">
+			<label>ID</label>
+			<label>Name</label>
+			<label></label>
+		</div>
+		<div id="info"></div>
+
+        <script type="text/javascript">
+			var color = 'gray';
+			var len = undefined;
+            // create an array with nodes
+            var nodes = [
+                {id: 1, label: 'Insurgent Cell', group:'cog'},
+				
+                {id: 21, label: 'Insurgent Operations', group:'cc'},
+				{id: 22, label: 'Command and Control', group:'cc'},
+				{id: 23, label: 'Propaganda', group:'cc'},
+				{id: 24, label: 'Intelligence', group:'cc'},
+				{id: 25, label: 'Logistics', group:'cc'},
+				{id: 26, label: 'Mobility', group:'cc'},
+				
+                {id: 31, label: 'Populace Cooperation', group:'cr'},
+				{id: 32, label: 'Political and Economic Strife', group:'cr'},
+				{id: 33, label: 'Leadership', group:'cr'},
+				{id: 34, label: 'External Support', group:'cr'},
+				{id: 35, label: 'Ineffectual Government Security Focus', group:'cr'},
+				{id: 36, label: 'Communication Systems', group:'cr'},
+				
+				{id: 41, label: 'Distrust of Foreigners', group:'cv'},
+				{id: 42, label: 'Monetary Rewards', group:'cv'},
+				{id: 43, label: 'Retribution by Insurgents', group:'cv'},
+				{id: 44, label: 'Threats and Coercion by Insurgents', group:'cv'},
+				{id: 45, label: 'Will to Resist against Government', group:'cv'},
+				{id: 46, label: 'Percenption of Government as Puppet Regime', group:'cv'},
+            ];
+
+            // create an array with edges
+            var edges = [
+                {from: 21, to: 1},
+                {from: 22, to: 1},
+				{from: 23, to: 1},
+                {from: 24, to: 1},
+				{from: 25, to: 1},
+                {from: 26, to: 1},
+				
+				{from: 31, to: 21},
+                {from: 32, to: 21},
+				{from: 33, to: 21},
+                {from: 34, to: 21},
+				{from: 35, to: 21},
+                {from: 36, to: 21},
+				
+				{from: 41, to: 31},
+                {from: 42, to: 31},
+				{from: 43, to: 31},
+                {from: 44, to: 31},
+				{from: 45, to: 31},
+                {from: 46, to: 31},
+            ];
+
+            // create a network
+            var container = document.getElementById('mynetwork');
+            var data = {
+				nodes: nodes,
+				edges: edges
+			};
+			var options = {
+				nodes: {
+					shape: 'dot',
+					size: 20,
+					font: {
+						size: 15,
+						color: 'black'
+					},
+					borderWidth: 2
+				},
+				edges: {
+					width: 2,
+					color: '#202020'
+				},
+				groups: {
+					cog: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf21e',
+							size: 30,
+							color: '#CC0000'
+						}
+					},
+					cc: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf1e2',
+							size: 30,
+							color: '#202020'
+						}
+					},
+					cr: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf06a',
+							size: 30,
+							color: '#FF4500'
+						}
+					},
+					cv: {
+						shape: 'icon',
+						icon: {
+							face: 'FontAwesome',
+							code: '\uf13e',
+							size: 30,
+							color: '#DAA520'
+						}
+					}
+				}
+			};
+			
+            network = new vis.Network(container, data, options);
+
+            // add event listener
+            network.on('select', function (properties) {
+                document.getElementById('info').innerHTML += 'selection: ' + JSON.stringify(properties) + '<br>';
+            });
+			
+			// set initial selection (id's of some nodes)
+            network.selectNodes([1]);
+        </script>
+    
+	</body>
+	</html>
