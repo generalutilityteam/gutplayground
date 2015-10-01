@@ -1,0 +1,9 @@
+#map-div{
+    height: 30vh; 
+    margin-top: 10px; 
+    padding: 10px; 
+    border-style: solid; 
+    border-width: 1px; 
+    border-color: #D3D3D3; 
+    border-radius: 5px;
+}

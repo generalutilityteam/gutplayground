@@ -1,0 +1,19 @@
+<html>
+
+<head>
+	<title>Map Test</title>
+	<link href="layout.css" rel="stylesheet" type="text/css">
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+	<script src="script.js"></script>	
+</head>
+
+<body onload="initialize()">
+	Map<br>
+	<input type="text" id="address"><button onclick="geocode()">Search</button><br> 
+	<div id="map-div">
+	</div>
+	<br><br>
+	Output<br>
+	<textarea id="outarea"></textarea>
+</body>
+</html>
