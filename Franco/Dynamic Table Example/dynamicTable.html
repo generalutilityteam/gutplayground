@@ -1,0 +1,65 @@
+<html>
+<head>
+	<title>Dynamic Table</title>
+	<script type="text/javascript">
+	var addedArr = new Array();
+	
+	function addRemove(id){
+		var cell = document.getElementById("cell"+id);
+		var found = false;
+		for(var i = 0; i < addedArr.length; i++) {
+            if(addedArr[i] == id) {
+                cell.setAttribute("bgcolor", "blue");
+				addedArr.splice(i, 1);
+				found = true;
+				break;
+            }
+        }
+		if(!found){
+			cell.setAttribute("bgcolor", "red");
+			addedArr.splice(addedArr.length, 1, id);
+		}
+	}
+	function generateRows(){
+		var table = document.getElementById("dynaTable");
+		
+		table.innerHTML = "";
+		var i = document.getElementById("dynaNumber").value;
+		for(var x = 0; x < i; x++){
+			var tr = document.createElement("tr");
+
+			var td = document.createElement("td");
+			td.id = "cell"+x;
+			td.innerHTML = "----------------------" + x;
+			if(Contains(addedArr, x))
+				td.setAttribute("bgcolor", "red");
+			else
+				td.setAttribute("bgcolor", "blue");
+			td.setAttribute("onclick", "addRemove("+ x +")");
+			tr.appendChild(td);
+			
+			table.appendChild(tr);
+		}
+	}
+	function Contains(arr, x){
+		for(var i = 0; i < arr.length; i++) {
+            if(arr[i] == x) {
+                return true;
+            }
+        }
+		return false;
+	}
+	
+	</script>
+</head>
+<input type="text" id="dynaNumber"> <button onclick="generateRows()"> Generate Rows</button>
+<br>
+<br>
+<body>
+<table id="dynaTable">
+	<tr bgcolor="red">
+	</tr>
+</table>
+
+</body>
+</html>
